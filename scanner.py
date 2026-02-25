@@ -100,6 +100,24 @@ def main():
             text = clean_text(raw)
             if len(text) < 50:
                 continue
+            # Filter out "seeking work" posts — only want actual job openings
+            text_lower = text.lower()
+            if any(phrase in text_lower for phrase in [
+                "seeking work", "seeking employment", "open to work",
+                "looking for work", "available for hire", "seeking opportunities",
+                "willing to relocate:", "willing to relocate :",
+                "i am looking", "i'm looking", "i am seeking", "i'm seeking",
+                "my resume", "my background", "hire me",
+            ]):
+                continue
+            # Must look like a hiring post
+            if not any(phrase in text_lower for phrase in [
+                "we are hiring", "we're hiring", "looking for", "we need",
+                "join our", "join us", "opening", "position", "role",
+                "opportunity", "full-time", "full time", "part-time",
+                "remote", "salary", "compensation", "apply",
+            ]):
+                continue
             score, matched = score_listing(text)
             if score <= 0:
                 continue
